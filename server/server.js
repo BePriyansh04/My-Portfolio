@@ -5,7 +5,7 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173' })); // Vite dev
+app.use(cors({ origin: 'https://my-portfolio-v3r8.onrender.com' })); // Vite dev
 app.use(express.json());
 
 app.post('/api/contact', async (req, res) => {
