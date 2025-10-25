@@ -1,0 +1,25 @@
+# render.yaml
+services:
+  # 1) Static front-end
+  - type: static
+    name: portfolio-site
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+
+  # 2) Node API back-end
+  - type: web
+    name: portfolio-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        value: https://portfolio-site.onrender.com   # change after custom domain
