@@ -1,5 +1,5 @@
 // src/components/VoiceNav.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
 
@@ -8,42 +8,19 @@ export default function VoiceNav() {
   const [transcript, setTranscript] = useState('');
   const [reply, setReply] = useState('');
 
-  const commands = {
-    'open projects': () => {
-      scrollTo('projects');
-      speak('Opening projects');
-    },
-    'view my work': () => {
-      scrollTo('projects');
-      speak('Opening projects');
-    },
-    'download cv': () => {
-      downloadCV();
-      speak('Downloading CV');
-    },
-    'open contact': () => {
-      scrollTo('contact');
-      speak('Taking you to contact');
-    },
-    'open home': () => {
-      scrollTo('home');
-      speak('Going home');
-    },
-    'open about': () => {
-      scrollTo('about');
-      speak('Opening about');
-    },
-    'open skills': () => {
-      scrollTo('skills');
-      speak('Showing skills');
-    },
-    'open experience': () => {
-      scrollTo('experience');
-      speak('Opening experience');
-    },
+  /* ===== KEYWORD MAP ===== */
+  const keywordMap = {
+    projects:  ['projects', 'project', 'portfolio', 'work'],
+    download:  ['download', 'cv', 'resume'],
+    contact:   ['contact', 'reach'],
+    home:      ['home', 'landing'],
+    about:     ['about', 'profile'],
+    skills:    ['skills', 'skill'],
+    experience:['experience', 'experiences'],
   };
 
-  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  const scrollTo = (id) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
   const downloadCV = () => {
     const link = document.createElement('a');
@@ -63,6 +40,27 @@ export default function VoiceNav() {
     setTimeout(() => setReply(''), 2000);
   };
 
+  const actions = {
+    projects:   () => { scrollTo('projects');  speak('Opening projects'); },
+    download:   () => { downloadCV();           speak('Downloading CV'); },
+    contact:    () => { scrollTo('contact');    speak('Taking you to contact'); },
+    home:       () => { scrollTo('home');       speak('Going home'); },
+    about:      () => { scrollTo('about');      speak('Opening about'); },
+    skills:     () => { scrollTo('skills');     speak('Showing skills'); },
+    experience: () => { scrollTo('experience'); speak('Opening experience'); },
+  };
+
+  const runKeywordCommand = (said) => {
+    const words = said.toLowerCase().split(/\s+/);
+    for (const [key, kwList] of Object.entries(keywordMap)) {
+      if (kwList.some((kw) => words.includes(kw))) {
+        actions[key]();
+        return true;
+      }
+    }
+    return false;
+  };
+
   const startListening = () => {
     if (!('webkitSpeechRecognition' in window)) {
       alert('Voice not supported');
@@ -77,7 +75,7 @@ export default function VoiceNav() {
     rec.onresult = (e) => {
       const said = e.results[0][0].transcript.toLowerCase();
       setTranscript(said);
-      if (commands[said]) commands[said]();
+      runKeywordCommand(said);
     };
     rec.onend = () => setListening(false);
     rec.start();
