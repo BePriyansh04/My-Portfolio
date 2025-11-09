@@ -14,8 +14,7 @@ const Footer = () => {
 >
   <div className="footer-content">
     <p className="footer-text">
-      © {currentYear} Priyansh Burman. Built with{' '}
-      <FaHeart className="footer-heart" /> and MERN Stack
+      © {currentYear} Priyansh Burman. Built with MERN Stack
     </p>
     <p className="footer-subtext">
       Full Stack MERN Developer | AI Integration Specialist
